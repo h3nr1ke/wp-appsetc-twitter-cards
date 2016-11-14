@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Deodapps - Simple Twitter Cards
+Plugin Name: Deodapps - Twitter Cards
 Plugin URI:  https://developer.wordpress.org/plugins/the-basics/
 Description: Create a simple way to include Twitter cards in Posts and Pages.
 Version:     0.0.1
@@ -11,15 +11,18 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: deodapps
 Domain Path: /languages
 */
-
 defined( 'ABSPATH' ) or die( 'Não não, perdão...' );
 
 //************** Includes **************
-//include("admin/settings.class.php");
+try{
+  include("include/deodapps_twitter_cards.php");
+}
+catch(Exception $e){
+  echo 'erro.......';
+}
 
 //************** Init **************
 function deodapps_twitter_cards_init() {
-
 }
 add_action( 'init', 'deodapps_twitter_cards_init' );
 
@@ -50,13 +53,14 @@ function deodapps_twitter_cards_menu(){
 }
 
 function deodapps_twitter_cards_menu_content(){
-  echo "Deodapps...";
+  echo "Menu Deodapps...";
 }
-function deodapps_twitter_cards_submenu_content(){
-  echo "Deodapps...";
-}
-add_action('admin_menu', 'deodapps_twitter_cards_menu');
 
+function deodapps_twitter_cards_submenu_content(){
+  echo "Sub Menu Deodapps...";
+}
+
+add_action('admin_menu', 'deodapps_twitter_cards_menu');
 
 //************** Activation / Deactivation **************
 function deodapps_twitter_cards_activation() {
@@ -68,35 +72,6 @@ function deodapps_twitter_cards_deactivation(){
 
 }
 register_deactivation_hook( __FILE__, 'deodapps_twitter_cards_deactivation' );
-
-//************** Card Types **************
-function _deodapps_twitter_cards_summary(){
-  $output = '
-  <!-- Deodapps Twitter Cards - Summary -->
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="%s" />
-    <meta name="twitter:title" content="%s" />
-    <meta name="twitter:description" content="%s" />
-    <meta name="twitter:image" content="%s" />
-    <meta name="twitter:image:alt" content="%s" />
-  <!-- Deodapps Twitter Cards - Summary -->
-  ';
-  return $output;
-}
-
-function _deodapps_twitter_cards_summary_with_large_image(){
-  $output = '
-  <!-- Deodapps Twitter Cards - Summary with large image -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="%s" />
-    <meta name="twitter:creator" content="%s">
-    <meta name="twitter:title" content="%s" />
-    <meta name="twitter:description" content="%s" />
-    <meta name="twitter:image" content="%s" />
-  <!-- Deodapps Twitter Cards - Summary with large image -->
-  ';
-  return $output;
-}
 
 //************** hook - add_meta_boxes **************
 function deodapps_twitter_cards_adding_custom_meta_boxes( $post_type, $post ) {
@@ -112,10 +87,26 @@ function deodapps_twitter_cards_adding_custom_meta_boxes( $post_type, $post ) {
 add_action( 'add_meta_boxes', 'adding_custom_meta_boxes', 10, 2 );
 
 //************** hook - wp_head **************
+/**
+ * Prints in the inside head section the item selected for the current post
+ */
 function deodapps_twitter_cards_head(){
-  //get current page
-  $output = sprintf(_deodapps_twitter_cards_summary(),'@hdeodato','Teste Title','Description Test','image_url_here','Image Alt Text');
-
-  echo $output;
+  //echo '<!-- era is_admin() -> '.is_admin().'-->';
+  if( !is_admin() ){
+    //get current page
+    try{
+      $twitterCards = new TwitterCards();
+      $output = sprintf($twitterCards->summary(),'@hdeodato','Teste Title','Description Test','image_url_here','Image Alt Text');
+      echo $output;
+    }
+    catch(Exception $e){
+      echo '<!-- ';
+      print_r($e);
+      echo ' -->';
+    }
+  }
+  else{
+    echo '<!-- No tags for -->';
+  }
 }
 add_action('wp_head', 'deodapps_twitter_cards_head');
