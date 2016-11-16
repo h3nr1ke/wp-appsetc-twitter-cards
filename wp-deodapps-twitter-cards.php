@@ -16,6 +16,10 @@ defined( 'ABSPATH' ) or die( 'Não não, perdão...' );
 //************** Includes **************
 try{
   include("include/deodapps_twitter_cards.php");
+
+  if(is_admin()){
+    include("include/deodapps_fields.php");
+  }
 }
 catch(Exception $e){
   echo 'erro.......';
@@ -23,8 +27,16 @@ catch(Exception $e){
 
 //************** Init **************
 function deodapps_twitter_cards_init() {
+  wp_enqueue_style( 'deodapps-twitter-cards', plugin_dir_url( __FILE__ ) . 'style.admin.min.css', array(),'1.1','all' );
 }
 add_action( 'init', 'deodapps_twitter_cards_init' );
+
+//************** Add CSS Scripts **************
+function deodapps_twitter_cards_enqueue_styles() {
+  //if(is_admin()){
+  //}
+}
+add_action( 'wp_enqueue_scripts', 'deodapps_twitter_cards_enqueue_styles' );
 
 //************** Add Menu Itens **************
 function deodapps_twitter_cards_menu(){
@@ -75,23 +87,66 @@ register_deactivation_hook( __FILE__, 'deodapps_twitter_cards_deactivation' );
 
 //************** hook - add_meta_boxes **************
 function deodapps_twitter_cards_adding_custom_meta_boxes( $post_type, $post ) {
-    add_meta_box( 
-        'my-meta-box',
-        __( 'My Meta Box' ),
-        'render_my_meta_box',
-        'post',
-        'normal',
-        'default'
-    );
+  add_meta_box( 
+    'deodapps-metatags',
+    __( 'Deodapps Twitter Cards' ),
+    '_deodapps_twitter_cards_metabox',
+    'post',
+    'normal',
+    'default'
+  );
 }
-add_action( 'add_meta_boxes', 'adding_custom_meta_boxes', 10, 2 );
+add_action( 'add_meta_boxes', 'deodapps_twitter_cards_adding_custom_meta_boxes', 10, 2 );
+function _deodapps_twitter_cards_metabox($post){
+  $tw_enable = new FormField();
+  $tw_enable->setLabel( __("Enable Custom Information?") );
+  $tw_enable->setId( 'wp_deodapps_twc_enable' );
+  $tw_enable->setDescription( __("Enable custom information for this post/page") );
+
+  $tw_site = new FormField();
+  $tw_site->setLabel( __("Twitter's username") );
+  $tw_site->setId( 'wp_deodapps_twc_site' );
+  $tw_site->setDescription( __("Twitter's username to be linked to this item") );
+
+  $tw_title = new FormField();
+  $tw_title->setLabel( __("Title") );
+  $tw_title->setId( 'wp_deodapps_twc_title' );
+  $tw_title->setDescription( __("Card Title, 70 chars max") );
+
+  $tw_description = new FormField();
+  $tw_description->setLabel( __("Description") );
+  $tw_description->setId( 'wp_deodapps_twc_description' );
+  $tw_description->setDescription( __("Card Description, 200 chars max") );
+
+  $tw_image = new FormField();
+  $tw_image->setLabel( __("Image") );
+  $tw_image->setId( 'wp_deodapps_twc_image' );
+  $tw_image->setDescription( __("Card Image, recommended 1200x400 pixels") );
+
+  $tw_image_alt = new FormField();
+  $tw_image_alt->setLabel( __("Image Alt Text") );
+  $tw_image_alt->setId( 'wp_deodapps_twc_image_alt' );
+  $tw_image_alt->setDescription( __("Card Image Alt text") );
+
+?>
+  <div class="wrapper_deodapps_metabox">
+    <?php 
+    echo $tw_enable->checkbox(); 
+    echo $tw_site->text(); 
+    echo $tw_title->text(); 
+    echo $tw_description->text(); 
+    echo $tw_image->text(); 
+    echo $tw_image_alt->text(); 
+    ?>
+  </div>
+<?php
+}
 
 //************** hook - wp_head **************
 /**
  * Prints in the inside head section the item selected for the current post
  */
 function deodapps_twitter_cards_head(){
-  //echo '<!-- era is_admin() -> '.is_admin().'-->';
   if( !is_admin() ){
     //get current page
     try{

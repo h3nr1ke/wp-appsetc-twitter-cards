@@ -4,7 +4,7 @@
  * @author  Henrique Deodato <[h3nr1ke@gmail.com]>
  */
 
-//defined( 'ABSPATH' ) or die( 'Não não, perdão...' );
+defined( 'ABSPATH' ) or die( 'Não não, perdão...' );
 
 //************** Card Types **************
 class TwitterCards{
@@ -31,6 +31,7 @@ class TwitterCards{
       <meta name="twitter:title" content="%s" />
       <meta name="twitter:description" content="%s" />
       <meta name="twitter:image" content="%s" />
+      <meta name="twitter:image:alt" content="%s" />
     <!-- Deodapps Twitter Cards - Summary with large image -->
     ';
   }

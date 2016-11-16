@@ -1,0 +1,27 @@
+{
+  "name": "deodapps-twitter-cards",
+  "version": "1.0.0",
+  "description": "Simple Twitter cards tags generator",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/h3nr1ke/wp-deodapps-twitter-cards.git"
+  },
+  "keywords": [
+    "Twitter",
+    "Cards",
+    "SEO"
+  ],
+  "author": "Henrique Deodato",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/h3nr1ke/wp-deodapps-twitter-cards/issues"
+  },
+  "homepage": "https://github.com/h3nr1ke/wp-deodapps-twitter-cards#readme",
+  "devDependencies": {
+    "grunt-contrib-less": "^1.4.0"
+  }
+}
